@@ -1,7 +1,7 @@
 {
   "name": "stimulus-resolvers",
   "description": "Load Stimulus controllers lazily and/or conditionally",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": "Philipp Daun <daun@daun.ltd>)",
   "license": "MIT",
   "source": "src/index.js",
