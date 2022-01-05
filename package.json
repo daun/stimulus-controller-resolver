@@ -3,11 +3,6 @@
   "version": "2.0.1",
   "description": "",
   "amdName": "StimulusControllerResolver",
-  "source": "./src/stimulus-controller-resolver.js",
-  "main": "./dist/stimulus-controller-resolver.cjs",
-  "module": "./dist/stimulus-controller-resolver.js",
-  "exports": "./dist/stimulus-controller-resolver.modern.js",
-  "unpkg": "./dist/stimulus-controller-resolver.umd.js",
   "type": "module",
   "files": [
     "dist"
@@ -18,6 +13,11 @@
     "semi": false,
     "singleQuote": true
   },
+  "source": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "esmodule": "dist/index.modern.js",
+  "unpkg": "dist/index.umd.js",
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle --watch",
