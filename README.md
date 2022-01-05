@@ -1,66 +1,133 @@
-# Stimulus Controller Resolver
+# Stimulus Resolvers
 
-If you have a lot of Stimulus Controllers that import other modules, the size can really start to add up. (I have some Controllers that mount [Svelte](https://svelte.dev) components!) Wouldn't it be great if you could load some of your Controllers _lazily_?
+[![NPM version](https://img.shields.io/npm/v/stimulus-resolvers?color=97aab4)](https://www.npmjs.com/package/stimulus-resolvers)
+[![GitHub license](https://img.shields.io/github/license/daun/stimulus-resolvers?color=97aab4)](./LICENSE)
+[![Bundle size](https://img.shields.io/bundlephobia/minzip/stimulus-resolvers?color=97aab4&label=size)](https://bundlephobia.com/result?p=stimulus-resolvers)
+<!-- [![GitHub (pre-)release date](https://img.shields.io/github/release-date-pre/daun/stimulus-resolvers?label=updated)](https://github.com/daun/stimulus-resolvers/releases) -->
 
-To solve this, I built this package that allows you to supply a custom (async!) resolver function for your controllers. It is supposed to provide an alternative to putting all your controllers into your main bundle.
+Load Stimulus controllers lazily and/or conditionally.
 
+Includes three resolvers:
+
+- [Static](#static-resolver) for direct imports
+- [Dynamic](#dynamic-resolver) for lazyloading controllers as dynamic imports
+- [Conditional](#conditional-resolver) for lazyloading controllers under customizable conditions
 
 ## Installation
 
-```sh
-npm i stimulus-controller-resolver
+```bash
+npm install stimulus-resolvers
 ```
 
+## Resolvers
 
-## Usage
+### Static Resolver
 
-To load all your Controllers lazily:
+Import controllers as static definitions, whether any elements are using the controller or not.
+Useful for global controllers used on all pages.
 
 ```js
 import { Application } from '@hotwired/stimulus'
-import StimulusControllerResolver from 'stimulus-controller-resolver'
+import { StaticControllerResolver } from 'stimulus-resolvers'
+
+import ButtonController from './controllers/button-controller'
+import CartController from './controllers/cart-controller'
 
 const application = Application.start()
 
-StimulusControllerResolver.install(application, async controllerName => (
-  (await import(`./controllers/${controllerName}-controller.js`)).default
-))
+StaticControllerResolver.install(application, {
+  ButtonController,
+  CartController
+})
 ```
 
-Depending on your configuration, your bundler should then split out all the files in the `controllers`-folder into seperate chunks.
+### Dynamic Resolver
 
-If you want to preload _some_ controllers but still load all the other ones lazily, you can use the good old [`application.register`](https://stimulusjs.org/handbook/installing#using-other-build-systems):
+Load controllers lazily once an element using the controller is found. Requires a custom async
+resolver function that takes the controller name and returns the controller's class definition.
 
 ```js
-import ImportantController from './controllers/important-controller.js'
-import CrucialController from './controllers/crucial-controller.js'
+import { Application } from '@hotwired/stimulus'
+import { DynamicControllerResolver } from 'stimulus-resolvers'
 
-application.register('important-controller', ImportantController)
-application.register('crucial-controller', CrucialController)
+const application = Application.start()
 
-StimulusControllerResolver.install(application, async controllerName => (
-  (await import(`./controllers/${controllerName}-controller.js`)).default
-))
+DynamicControllerResolver.install(application, (controllerName) => {
+  return import(`./controllers/${controllerName}-controller`).then(controller => controller.default)
+})
 ```
 
+### Conditional Resolver
 
-## API
+Load controllers lazily once an element using the controller is found **and** an optional condition
+is met:
+
+- `visible`: the element becomes visible
+- `idle`: the browser is idle
+- `media`: a media query is matched
+
+Requires the same custom async resolver function of the dynamic resolver.
 
 ```js
-StimulusControllerResolver.install(application, resolverFn)
+import { Application } from '@hotwired/stimulus'
+import { ConditionalControllerResolver } from 'stimulus-resolvers'
+
+const application = Application.start()
+
+ConditionalControllerResolver.install(application, (controllerName) => {
+  return import(`./controllers/${controllerName}-controller`).then(controller => controller.default)
+})
 ```
 
-- `application`: This is your instance of `Stimulus.Application`.
-- `resolverFn(controllerName): Controller`: A function that receives the name of the controller (that's the part you write in `data-controller="this-is-the-name"`) and returns the `Controller` class you want to use for this `controllerName`. This will only be called the first time each `controllerName` is encountered.
+Define your controllers as usual, then set the conditions for loading it using the
+`data-controller-load-when` attribute.
 
-`install()` returns an instance of `StimulusControllerResolver`, on which you can call:
+```html
+<div
+  data-controller="test"
+  data-controller-load-when="idle">
+    Will load when the browser is idle.
+</div>
+
+<div
+  data-controller="test"
+  data-controller-load-when="visible">
+    Will load when the element enters the viewport.
+</div>
+
+<div
+  data-controller="test"
+  data-controller-load-when="media:(min-width: 600px)">
+    Will load when the window is at least 600px wide.
+</div>
+```
+
+## Combining resolvers
+
+To include some controllers in the main bundle but load all other controllers lazily,
+install both the static resolver as well as either one of the dynamic resolvers.
 
 ```js
-instance.stop() // to stop getting new controller definitions
+import { Application } from '@hotwired/stimulus'
+import { StaticControllerResolver, DynamicControllerResolver } from 'stimulus-resolvers'
 
-// and
+import ButtonController from './controllers/button-controller'
+import CartController from './controllers/cart-controller'
 
-instance.start() // to start again
-````
+// Core controllers included in the main bundle as static imports
+// All other controllers are loaded from dynamic imports
+const coreControllers = {
+  ButtonController,
+  CartController
+}
 
-`install()` will automatically call `start()`, so most of the time you shouldn't have to do anything.
+const application = Application.start()
+StaticControllerResolver.install(application, coreControllers)
+DynamicControllerResolver.install(application, (controllerName) => {
+  return import(`./controllers/${controllerName}-controller`).then(controller => controller.default)
+})
+```
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)

@@ -1,48 +1,48 @@
 {
-  "name": "stimulus-controller-resolver",
-  "version": "2.0.1",
-  "description": "",
-  "amdName": "StimulusControllerResolver",
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true
-  },
+  "name": "stimulus-resolvers",
+  "description": "Load Stimulus controllers lazily and/or conditionally",
+  "version": "1.0.0",
+  "author": "Philipp Daun <daun@daun.ltd>)",
+  "license": "MIT",
   "source": "src/index.js",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "esmodule": "dist/index.modern.js",
   "unpkg": "dist/index.umd.js",
   "scripts": {
-    "build": "microbundle",
-    "dev": "microbundle --watch",
-    "prettier": "prettier --write src/*",
-    "prepublish": "npm run build"
+    "lint": "eslint src",
+    "clean": "rimraf dist",
+    "bundle": "microbundle",
+    "build": "npm run clean && npm run bundle",
+    "prepublish": "npm run clean && npm run lint && npm run build"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/danieldiekmeier/stimulus-controller-resolver.git"
+    "url": "https://github.com/daun/stimulus-resolvers"
   },
   "keywords": [
     "stimulus",
-    "stimulusjs",
     "controller",
+    "dynamic",
     "lazy"
   ],
-  "author": "Daniel Diekmeier",
-  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danieldiekmeier/stimulus-controller-resolver/issues"
+    "url": "https://github.com/daun/stimulus-resolvers/issues"
   },
-  "homepage": "https://github.com/danieldiekmeier/stimulus-controller-resolver#readme",
+  "homepage": "https://github.com/daun/stimulus-resolvers",
   "devDependencies": {
-    "microbundle": "^0.14.1",
-    "prettier": "^2.4.1"
+    "eslint": "^7.3.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-prettier": "^3.1.4",
+    "esm": "^3.2.25",
+    "microbundle": "^0.12.1",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2"
   },
   "peerDependencies": {
     "@hotwired/stimulus": "3.x"
