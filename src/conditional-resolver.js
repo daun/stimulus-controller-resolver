@@ -42,13 +42,19 @@ export default class ConditionalControllerResolver extends DynamicControllerReso
 
   getControllerDataFromElement(element) {
     const controllers = super.getControllerDataFromElement(element)
+    const { loadBehavior, loadOptions } =
+      this.getLoadBehaviorFromElement(element)
 
+    // Add load behavior and load options to available controller data
+    return controllers.map((controller) => {
+      return { ...controller, loadBehavior, loadOptions }
+    })
+  }
+
+  getLoadBehaviorFromElement(element) {
     const loadBehaviorAttr = element.getAttribute(this.loadBehaviorAttr) || ''
     const [loadBehavior, ...loadOptionsRest] = loadBehaviorAttr.split(':')
     const loadOptions = loadOptionsRest.join(':')
-
-    return controllers.map(({ controllerName }) => {
-      return { element, controllerName, loadBehavior, loadOptions }
-    })
+    return { loadBehavior, loadOptions }
   }
 }

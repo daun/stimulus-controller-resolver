@@ -47,14 +47,10 @@ export default class DynamicControllerResolver {
     controllers.forEach((controller) => this.loadController(controller))
   }
 
-  loadController(controller) {
-    const { controllerName } = controller
-
-    if (this.isControllerLoaded(controllerName)) {
-      return
+  loadController({ controllerName }) {
+    if (!this.isControllerLoaded(controllerName)) {
+      this.loadControllerDefinition(controllerName)
     }
-
-    this.loadControllerDefinition(controllerName)
   }
 
   async loadControllerDefinition(controllerName) {

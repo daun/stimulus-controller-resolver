@@ -4,15 +4,16 @@ export default function whenVisible(callback, { element, ...options }) {
     return
   }
 
-  const margin = options.expand || '0px'
+  const rootMargin = options.expand || '0px'
+
   const observer = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return
       observer.disconnect()
       callback()
     },
-    { rootMargin: margin }
+    { rootMargin }
   )
-  observer.observe(element)
 
+  observer.observe(element)
 }
