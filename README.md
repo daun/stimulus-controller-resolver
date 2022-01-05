@@ -128,6 +128,10 @@ DynamicControllerResolver.install(application, (controllerName) => {
 })
 ```
 
+## Credits
+
+Based on original work in [stimulus-controller-resolver](https://github.com/danieldiekmeier/stimulus-controller-resolver) by [Daniel Diekmeier](https://github.com/danieldiekmeier).
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
