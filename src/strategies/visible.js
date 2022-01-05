@@ -15,5 +15,4 @@ export default function whenVisible(callback, { element, ...options }) {
   )
   observer.observe(element)
 
-  console.log(`Loading when visible: ${margin}`)
 }

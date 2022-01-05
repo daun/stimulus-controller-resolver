@@ -5,6 +5,4 @@ export default function whenMediaMatches(callback, { query }) {
   } else {
     mql.addEventListener('change', callback, { once: true })
   }
-
-  console.log(`Loading when media matches: ${query}`)
 }

@@ -22,14 +22,9 @@ export default class ConditionalControllerResolver extends DynamicControllerReso
 
   loadController(controller) {
     const { element, controllerName, loadBehavior, loadOptions } = controller
-
     if (this.isControllerLoaded(controllerName)) {
       return true
     }
-
-    console.log(
-      `Loading controller conditionally: ${controllerName} / ${loadBehavior} / ${loadOptions}`
-    )
 
     const loadController = () => super.loadController(controller)
 

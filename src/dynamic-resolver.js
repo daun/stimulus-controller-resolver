@@ -51,11 +51,9 @@ export default class DynamicControllerResolver {
     const { controllerName } = controller
 
     if (this.isControllerLoaded(controllerName)) {
-      console.log('Controller already loaded', controllerName)
       return
     }
 
-    console.log('Loading controller', controllerName)
     this.loadControllerDefinition(controllerName)
   }
 

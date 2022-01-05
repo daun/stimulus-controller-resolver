@@ -4,6 +4,4 @@ export default function whenIdle(callback) {
   } else {
     setTimeout(callback, 250)
   }
-
-  console.log('Loading when idle')
 }
