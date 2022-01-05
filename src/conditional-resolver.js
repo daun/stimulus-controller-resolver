@@ -13,7 +13,7 @@ export default class ConditionalControllerResolver extends DynamicControllerReso
    * @param {function} resolverFn Function that takes a controller name and returns a Promise resolving to the corresponding controller class definition
    */
   static install(application, resolverFn) {
-    super.install(application, resolverFn)
+    return super.install(application, resolverFn)
   }
 
   get loadBehaviorAttr() {
