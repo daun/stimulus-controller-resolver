@@ -38,10 +38,10 @@ export default class ConditionalControllerResolver extends DynamicControllerReso
         return whenEventTriggered(loadController, { event: loadOptions })
       case 'idle':
         return whenIdle(loadController)
-      case 'visible':
-        return whenVisible(loadController, { element, expand: loadOptions })
       case 'media':
         return whenMediaMatches(loadController, { query: loadOptions })
+      case 'visible':
+        return whenVisible(loadController, { element, expand: loadOptions })
       default:
         return loadController()
     }
