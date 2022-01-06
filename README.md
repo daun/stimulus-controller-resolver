@@ -11,7 +11,11 @@ Includes three resolvers:
 
 - [Static](#static-resolver) for direct imports
 - [Dynamic](#dynamic-resolver) for lazyloading controllers as dynamic imports
-- [Conditional](#conditional-resolver) for lazyloading controllers under customizable conditions
+- [Conditional](#conditional-resolver) for lazyloading controllers under customizable conditions:
+  - element enters the viewport
+  - media query is matched
+  - browser is idle
+  - event is triggered
 
 ## Installation
 
@@ -62,9 +66,10 @@ DynamicControllerResolver.install(application, (controllerName) => {
 Load controllers lazily once an element using the controller is found **and** an optional condition
 is met:
 
-- `visible`: the element becomes visible
-- `idle`: the browser is idle
-- `media`: a media query is matched
+- `visible`: element enters the viewport
+- `media`: media query is matched
+- `idle`: browser is idle
+- `event`: custom event is triggered
 
 Requires the same custom async resolver function of the dynamic resolver.
 
@@ -82,24 +87,51 @@ ConditionalControllerResolver.install(application, (controllerName) => {
 Define your controllers as usual, then set the conditions for loading it using the
 `data-controller-load-when` attribute.
 
-```html
-<div
-  data-controller="test"
-  data-controller-load-when="idle">
-    Will load when the browser is idle.
-</div>
+#### Condition: element visible
 
-<div
-  data-controller="test"
-  data-controller-load-when="visible">
+Controller is loaded when its element enters the viewport.
+
+```html
+<div data-controller="example" data-controller-load-when="visible">
     Will load when the element enters the viewport.
 </div>
+```
 
-<div
-  data-controller="test"
-  data-controller-load-when="media:(min-width: 600px)">
+#### Condition: media query
+
+Controller is loaded when the window matches a specified media query.
+
+```html
+<div data-controller="example" data-controller-load-when="media:(min-width: 600px)">
     Will load when the window is at least 600px wide.
 </div>
+```
+
+#### Condition: browser idle
+
+Controller is loaded when the browser is idle. Uses `requestIdleCallback` where supported, falls
+back to a one-second timeout otherwise.
+
+```html
+<div data-controller="example" data-controller-load-when="idle">
+    Will load when the browser is idle.
+</div>
+```
+
+#### Condition: event triggered
+
+Controller is loaded when an event is fired on (or bubbles up to) the document.
+
+```html
+<div data-controller="example" data-controller-load-when="event:my-custom-event">
+    Will load when a custom event is fired.
+</div>
+```
+
+Triggering the event manually will load the controller:
+
+```js
+document.dispatchEvent(new CustomEvent('my-custom-event', { bubbles: true }))
 ```
 
 ## Combining resolvers
