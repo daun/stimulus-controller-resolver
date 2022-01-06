@@ -1,6 +1,11 @@
 import DynamicControllerResolver from './dynamic-resolver'
 
-import { whenIdle, whenVisible, whenMediaMatches } from './strategies'
+import {
+  whenEventTriggered,
+  whenIdle,
+  whenMediaMatches,
+  whenVisible
+} from './strategies'
 
 /**
  * Resolver that loads controllers as async chunks when conditions match
@@ -29,6 +34,8 @@ export default class ConditionalControllerResolver extends DynamicControllerReso
     const loadController = () => super.loadController(controller)
 
     switch (loadBehavior) {
+      case 'event':
+        return whenEventTriggered(loadController, { event: loadOptions })
       case 'idle':
         return whenIdle(loadController)
       case 'visible':
